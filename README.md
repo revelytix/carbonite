@@ -1,7 +1,8 @@
 # carbonite
 
-Carbonite is a Clojure library to convert Clojure data to serialized form and back using the [Kryo](http://code.google.com/p/kryo/) serialization library.  Kryo is known for being fast and producing very small serializations.  
+Ever needed to freeze your Clojure data in perfect hibernation?  Ever want to deserialize your data without concealing yourself as a bounty hunter in Jabba's desert palace?
 
+Carbonite is a Clojure library to convert Clojure data to serialized form and back using the [Kryo](http://code.google.com/p/kryo/) serialization library.  Kryo is known for being fast and producing very small serializations.  
 ## License
 
 Copyright (C) 2011 Revelytix, Inc.
@@ -15,7 +16,7 @@ Kryo works by creating a registry of classes to serializers/deserializers.  The 
 Deserialization is done in reverse - the class identifier is read and the deserializer is looked up in the registry.  The deserializer is then used to read bytes from the stream.
 
 ```clojure
-;; Initialize a registry with the default serializers
+;; Initialize a registry with the default serializers (covering most Java and Clojure data)
 (def registry (default-registry))
 
 ;; Serialize my-data (any Clojure data) into the byte[] b
@@ -23,6 +24,14 @@ Deserialization is done in reverse - the class identifier is read and the deseri
 
 ;; Deserialize bytes back to Clojure data
 (def c (read-bytes registry b)))
+```
+
+## Extensions
+
+To implement your own serializer, follow the examples set out in carbonite.serializer:
+
+```clojure
+
 ```
 
 ## Handled classes 
