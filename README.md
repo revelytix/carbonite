@@ -13,7 +13,26 @@ Distributed under the [Apache License, Version 2.0](http://www.apache.org/licens
 
 Kryo works by creating a registry of classes to serializers/deserializers.  The serialized stream written by Kryo consists of a class identifier followed by the bytes written for the instance.  Serializers may recursively use other serializers.  
 
-Deserialization is done in reverse - the class identifier is read and the deserializer is looked up in the registry.  The deserializer is then used to read bytes from the stream.
+Deserialization is done in reverse - the class identifier is read and the deserializer is looked up in the registry.  The deserializer is then used to read bytes from the stream.  
+
+The main api is contained in the carbonite.api namespace:
+
+```clojure
+;; Initialize a registry with the default serializers (covering most Java and Clojure data)
+(def registry (default-registry))
+
+;; Serialize my-data (any Clojure data) into the ByteBuffer b
+(def b (new-buffer 1024))
+(write-buffer registry b my-data))
+
+;; Rewind buffer back to the beginning
+(.rewind b)
+
+;; Deserialize buffer back to Clojure data
+(def c (read-buffer registry b)))
+```
+
+If you'd prefer to work in byte[] rather than ByteBuffers, there is also some possibly suspect support for that in the carbonite.buffer namespace.  
 
 ```clojure
 ;; Initialize a registry with the default serializers (covering most Java and Clojure data)
