@@ -1,6 +1,6 @@
 # carbonite
 
-Carbonite is a Clojure library to convert Clojure data to serialized form and back using the Kryo serialization library.  Kryo is known for being fast and producing very small serializations.  
+Carbonite is a Clojure library to convert Clojure data to serialized form and back using the [Kryo](http://code.google.com/p/kryo/) serialization library.  Kryo is known for being fast and producing very small serializations.  
 
 ## License
 
