@@ -15,15 +15,23 @@
             Cons PersistentList PersistentList$EmptyList
             ArraySeq$ArraySeq_int LazySeq IteratorSeq StringSeq]))
 
+(defn clj-print
+  "Use the Clojure pr-str to print an object into the buffer using pr-str."
+  [buffer obj]
+  (StringSerializer/put buffer (pr-str obj)))
+
+(defn clj-read
+  "Use the Clojure read-string to read an object from a buffer."
+  [buffer]
+  (read-string (StringSerializer/get buffer)))
+
 (def clojure-reader-serializer
   "Define a serializer that utilizes the Clojure pr-str and read-string functions
    to serialize/deserialize instances relying solely on the printer/reader.  Probably
    not the most efficient but likely to work in many cases."
   (proxy [Serializer] []  
-    (writeObjectData [buffer obj]
-      (StringSerializer/put buffer (pr-str obj)))
-    (readObjectData [buffer type]
-      (read-string (StringSerializer/get buffer)))))
+    (writeObjectData [buffer obj] (clj-print buffer obj))
+    (readObjectData [buffer type] (clj-read buffer))))
 
 (defn clojure-coll-serializer
   "Create a collection Serializer that conj's to an initial collection."
