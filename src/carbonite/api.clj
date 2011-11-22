@@ -1,7 +1,6 @@
 (ns carbonite.api
   (:require [clojure.string :as s])
-  (:use [carbonite.serializer]
-        [carbonite.buffer])
+  (:use [carbonite.serializer])
   (:import [com.esotericsoftware.kryo Kryo Serializer]
            [java.nio ByteBuffer]))
 
@@ -55,23 +54,6 @@
   "Read serialized object from byte-buffer using registry."
   [registry byte-buffer]
   (.readClassAndObject registry byte-buffer))
-
-;;;; APIs to read and write objects using byte[] and cached buffers.
-
-(defn write-bytes
-  "Write obj using registry and return a byte[]."
-  [registry obj]
-  (let [buffer (ensure-buffer registry)
-          [item-bytes new-buffer] (write-with-cached-buffer registry buffer obj)]
-      (when new-buffer
-        (put-to-context new-buffer))
-      item-bytes))
-
-(defn read-bytes
-  "Read obj from byte[] using the registry."
-  [^Kryo registry ^bytes bytes]
-  (read-buffer registry (ByteBuffer/wrap bytes)))
-
 
 
 ;; Copyright 2011 Revelytix, Inc.

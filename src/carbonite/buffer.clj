@@ -1,4 +1,5 @@
 (ns carbonite.buffer
+  (:use [carbonite.api :only (read-buffer)])
   (:import [com.esotericsoftware.kryo Kryo Serializer SerializationException]
            [java.io ByteArrayInputStream InputStream]
            [java.nio ByteBuffer BufferOverflowException]))
@@ -63,6 +64,21 @@
           (.reset (Kryo/getContext))
           (write-with-cached-buffer registry (ByteBuffer/allocate (* 2 (.capacity buffer))) item))))))
 
+;;;; APIs to read and write objects using byte[] and cached buffers.
+
+(defn write-bytes
+  "Write obj using registry and return a byte[]."
+  [registry obj]
+  (let [buffer (ensure-buffer registry)
+          [item-bytes new-buffer] (write-with-cached-buffer registry buffer obj)]
+      (when new-buffer
+        (put-to-context new-buffer))
+      item-bytes))
+
+(defn read-bytes
+  "Read obj from byte[] using the registry."
+  [^Kryo registry ^bytes bytes]
+  (read-buffer registry (ByteBuffer/wrap bytes)))
 
 
 ;; Copyright 2011 Revelytix, Inc.
