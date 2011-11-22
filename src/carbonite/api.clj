@@ -1,4 +1,4 @@
-(ns carbonite.core
+(ns carbonite.api
   (:require [clojure.string :as s])
   (:use [carbonite.serializer]
         [carbonite.buffer])

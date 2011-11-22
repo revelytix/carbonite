@@ -1,5 +1,5 @@
-(ns carbonite.test.core
-  (:use [carbonite.core]
+(ns carbonite.test-api
+  (:use [carbonite.api]
         [carbonite.buffer]
         [clojure.test])
   (:import [java.nio ByteBuffer]
