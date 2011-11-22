@@ -34,12 +34,13 @@ The main api is contained in the carbonite.api namespace:
 
 If you'd prefer to work in byte[] rather than ByteBuffers, there is also some possibly suspect support for that in the carbonite.buffer namespace.  
 
-Because the Kryo API works only on ByteBuffers, we must create a ByteBuffer internally for write-bytes to work with - currently, this function uses a ThreadLocal buffer stored inside the Kryo context facility.  The buffer is initialized with size *initial-buffer* bytes, and serialization will retry at double the size up to *max-buffer*.  The buffer will only be cached for reuse if it is less than *keep-buffer* bytes.  
+Because the Kryo API works only on ByteBuffers, we must create a ByteBuffer internally for write-bytes to work with - currently, this function uses a ThreadLocal buffer stored inside the Kryo context facility.  The buffer is initialized with size `*initial-buffer*` bytes, and serialization will retry at double the size up to `*max-buffer*`.  The buffer will only be cached for reuse if it is less than `*keep-buffer*` bytes.  
 
 Initial values are:
-* *initial-buffer* = 1024 bytes
-* *max-buffer* = 512*1024*1024 = 512MB
-* *keep-buffer* = 128*1024 = 128KB
+
+* `*initial-buffer*` = 1024 bytes
+* `*max-buffer*` = 512*1024*1024 = 512MB
+* `*keep-buffer*` = 128*1024 = 128KB
 
 ```clojure
 ;; Initialize a registry with the default serializers (covering most Java and Clojure data)
