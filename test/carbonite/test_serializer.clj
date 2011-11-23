@@ -2,7 +2,8 @@
   (:use [clojure.test]
         [carbonite.api]
         [carbonite.serializer])
-  (:import [com.esotericsoftware.kryo Serializer]))
+  (:import [com.esotericsoftware.kryo Serializer]
+           [java.nio ByteBuffer]))
 
 ;; An elegant weapon, not as clumsy or random as a blaster.
 (defrecord LightSaber [style color])
@@ -20,7 +21,7 @@
   (let [registry (default-registry)]
     (register-serializers registry {LightSaber saber-serializer})
     (let [darth-maul (LightSaber. :double-bladed :red)
-          buffer (new-buffer 1024)]
+          ^ByteBuffer buffer (new-buffer 1024)]
       (write-buffer registry buffer darth-maul)
       (.rewind buffer)
       (is (= darth-maul
