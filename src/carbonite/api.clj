@@ -13,8 +13,19 @@
     (.register registry klass serializer))
   registry)
 
+(defn register-generic
+  "Default behavior of Kryo's handleUnregisteredClass method."
+  [klass ^Kryo registry]
+  (let [serializer (.newSerializer registry klass)]
+    (.register registry klass serializer true)))
+
 ;; first item *is* the class of the unregistered object type
 (defmulti kryo-extend (fn [klass registry] klass))
+
+;; kryo-extend defaults to standard behavior.
+(defmethod kryo-extend :default
+  [klass registry]
+  (register-generic klass registry))
 
 (defn new-registry
   "Create a new Kryo registry that supports unregistered classes and defers to the
