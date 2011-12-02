@@ -107,6 +107,7 @@ Registering the serializers by concrete class is fine if you know the concrete c
   * java.math.BigDecimal
   * java.math.BigInteger
   * java.util.Date
+  * java.util.UUID
   * java.sql.Date
   * java.sql.Time
   * java.sql.Timestamp

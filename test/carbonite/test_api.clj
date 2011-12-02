@@ -4,7 +4,7 @@
         [clojure.test])
   (:import [java.nio ByteBuffer]
            [java.net URI]
-           [java.util Date]
+           [java.util Date UUID]
            [com.esotericsoftware.kryo Kryo SerializationException]))
 
 (defn round-trip [item]
@@ -46,13 +46,15 @@
        (java.sql.Time. 3600)       ;; java.sql.Time
        (URI. "http://foo.com?bar=baz")  ;; java.net.URI
        (URI. "http://\u20AC.com")  ;; java.net.URI with unicode
+       (UUID. 999 -42) 
+       (UUID. -42 999)
        (range 50)    ;; LazySeq
        (cons 1 '())  ;; Cons
        (cons 1 '(2))
        (cons 1 '(2 3))
        (struct-map mystruct :a 1 :b 2)  ;; PersistentStructMap
        {:a 1 :b 2 :c 3 :d 4 :e 5 :f 6 :g 7 :h 8 :i 9} ;; PersistentArrayMap
-       (seq "abc") ;; StringSeq
+       (seq "abc") ;; StringSeq       
        )) 
 
 (deftest test-roundtrip-iterator-seq

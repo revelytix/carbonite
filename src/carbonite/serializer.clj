@@ -7,7 +7,7 @@
            [java.nio ByteBuffer BufferOverflowException]
            [java.math BigDecimal BigInteger]
            [java.net URI]
-           [java.util Date]
+           [java.util Date UUID]
            [java.sql Time Timestamp]
            [clojure.lang BigInt Keyword Symbol PersistentArrayMap
             PersistentHashMap MapEntry PersistentStructMap 
@@ -103,6 +103,16 @@
     (readObjectData [buffer type]
       (URI/create (StringSerializer/get buffer)))))
 
+(def uuid-serializer
+  "Define a Kryo Serializer for java.net.UUID."
+  (proxy [Serializer] []
+    (writeObjectData [buffer ^UUID uuid]
+      (LongSerializer/put buffer (.getMostSignificantBits uuid) false)
+      (LongSerializer/put buffer (.getLeastSignificantBits uuid) false))
+    (readObjectData [buffer type]
+      (UUID. (LongSerializer/get buffer false)
+             (LongSerializer/get buffer false)))))
+
 (def timestamp-serializer
   "Define a Kryo Serializer for java.sql.Timestamp"
   (proxy [Serializer] []
@@ -136,7 +146,8 @@
    Timestamp timestamp-serializer
    java.sql.Date (sqldate-serializer java.sql.Date)
    java.sql.Time (sqldate-serializer java.sql.Time)
-   URI uri-serializer})
+   URI uri-serializer
+   UUID uuid-serializer})
 
 (defn clojure-collections
   [registry]
