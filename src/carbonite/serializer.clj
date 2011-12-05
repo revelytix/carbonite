@@ -135,19 +135,21 @@
 
 (def clojure-primitives
   "Define a map of Clojure primitives and their serializers to install."
-  {BigInt clojure-reader-serializer
+  (array-map
+   BigInt clojure-reader-serializer
    Keyword clojure-reader-serializer
-   Symbol clojure-reader-serializer})
+   Symbol clojure-reader-serializer))
 
 (def java-primitives
-  {BigDecimal (BigDecimalSerializer.)
+  (array-map
+   BigDecimal (BigDecimalSerializer.)
    BigInteger (BigIntegerSerializer.)
    Date (DateSerializer.)
    Timestamp timestamp-serializer
    java.sql.Date (sqldate-serializer java.sql.Date)
    java.sql.Time (sqldate-serializer java.sql.Time)
    URI uri-serializer
-   UUID uuid-serializer})
+   UUID uuid-serializer))
 
 (defn clojure-collections
   [registry]
