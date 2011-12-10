@@ -137,7 +137,7 @@
   "Serialize clojure intern types"
   [value-function intern-function]
   (proxy [Serializer] []
-    (writeObjectData [buffer ^Keyword k]
+    (writeObjectData [buffer k]
       (StringSerializer/put buffer (value-function k)))
     (readObjectData [buffer type]
       (intern-function (StringSerializer/get buffer)))))
@@ -146,7 +146,8 @@
   "Define a map of Clojure primitives and their serializers to install."
   {BigInt clojure-reader-serializer
    Keyword (intern-type-serializer
-            #(.getName ^Keyword %) #(Keyword/intern ^String %))
+            #(.substring (.toString ^Keyword %) 1) ;;remove :
+            #(Keyword/intern ^String %))
    Symbol (intern-type-serializer
            #(.toString ^Symbol %) #(Symbol/intern ^String %))})
 
