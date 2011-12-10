@@ -133,11 +133,22 @@
       (let [constructor (.getConstructor klass (into-array Class [Long/TYPE]))]
         (.newInstance constructor (object-array [ (LongSerializer/get buffer true)]))))))
 
+(defn intern-type-serializer
+  "Serialize clojure intern types"
+  [value-function intern-function]
+  (proxy [Serializer] []
+    (writeObjectData [buffer ^Keyword k]
+      (StringSerializer/put buffer (value-function k)))
+    (readObjectData [buffer type]
+      (intern-function (StringSerializer/get buffer)))))
+
 (def clojure-primitives
   "Define a map of Clojure primitives and their serializers to install."
   {BigInt clojure-reader-serializer
-   Keyword clojure-reader-serializer
-   Symbol clojure-reader-serializer})
+   Keyword (intern-type-serializer
+            #(.getName ^Keyword %) #(Keyword/intern ^String %))
+   Symbol (intern-type-serializer
+           #(.toString ^Symbol %) #(Symbol/intern ^String %))})
 
 (def java-primitives
   {BigDecimal (BigDecimalSerializer.)
