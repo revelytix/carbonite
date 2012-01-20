@@ -2,7 +2,8 @@
   (:use [carbonite.api]
         [carbonite.buffer]
         [clojure.test])
-  (:import [java.nio ByteBuffer]
+  (:import [clojure.lang ArraySeq]
+           [java.nio ByteBuffer]
            [java.net URI]
            [java.util Date UUID]
            [com.esotericsoftware.kryo Kryo SerializationException]))
@@ -19,12 +20,17 @@
   (doto (java.sql.Timestamp. time)
     (.setNanos nano)))
 
+(defn array-seq [& xs]
+  (ArraySeq/create (into-array Object xs)))
+
 (deftest test-round-trip-kryo
   (are [obj] (is (= obj (round-trip obj)))
        nil
        1      ;; long
        5.2    ;; double
+       #'+    ;; Var
        5M     ;; BigDecimal
+       1/2    ;; Ratio
        1000000000000000000000000  ;; BigInt
        :foo   ;; keyword
        :a/foo ;; namespaced keyword
@@ -54,7 +60,8 @@
        (cons 1 '(2 3))
        (struct-map mystruct :a 1 :b 2)  ;; PersistentStructMap
        {:a 1 :b 2 :c 3 :d 4 :e 5 :f 6 :g 7 :h 8 :i 9} ;; PersistentArrayMap
-       (seq "abc") ;; StringSeq       
+       (seq "abc") ;; StringSeq
+       (array-seq 1 2 3) ;; ArraySeq
        )) 
 
 (deftest test-roundtrip-iterator-seq

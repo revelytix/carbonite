@@ -115,6 +115,8 @@ Registering the serializers by concrete class is fine if you know the concrete c
 * Clojure primitives
   * clojure.lang.BigInt
   * clojure.lang.Keyword
+  * clojure.lang.Ratio
+  * clojure.lang.Var
   * clojure.lang.Symbol
 * Collections and sequences
   * clojure.lang.Cons
@@ -129,11 +131,11 @@ Registering the serializers by concrete class is fine if you know the concrete c
   * clojure.lang.PersistentStructMap
   * clojure.lang.PersistentVector
   * clojure.lang.StringSeq
+  * clojure.lang.ArraySeq
 
 ## TODO - things that could be handled but are not
 
 * ArrayChunk
-* ArraySeq
 * ChunkBuffer
 * ChunkedCons
 * EnumerationSeq
@@ -142,7 +144,6 @@ Registering the serializers by concrete class is fine if you know the concrete c
 * PersistentTreeMap (how to handle comparator?)
 * PersistentTreeSet (ditto)
 * Range
-* Ratio
 * SeqEnumeration
 * SeqIterator
 
