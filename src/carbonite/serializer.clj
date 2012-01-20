@@ -11,8 +11,8 @@
            [java.sql Time Timestamp]
            [clojure.lang BigInt Keyword Symbol PersistentArrayMap
             PersistentHashMap MapEntry PersistentStructMap 
-            PersistentVector PersistentHashSet
-            Cons PersistentList PersistentList$EmptyList
+            PersistentVector PersistentHashSet Ratio ArraySeq
+            Cons PersistentList PersistentList$EmptyList Var
             ArraySeq$ArraySeq_int LazySeq IteratorSeq StringSeq]))
 
 (defn clj-print
@@ -31,6 +31,16 @@
    not the most efficient but likely to work in many cases."
   (proxy [Serializer] []  
     (writeObjectData [buffer obj] (clj-print buffer obj))
+    (readObjectData [buffer type] (clj-read buffer))))
+
+(def ^{:doc "Define a serializer that utilizes the Clojure pr-str and
+  read-string functions to serialize/deserialize instances relying
+  solely on the printer/reader. Binds *print-dup* to true on read."}
+  clojure-print-dup-serializer
+  (proxy [Serializer] []  
+    (writeObjectData [buffer obj]
+      (binding [*print-dup* true]
+        (clj-print buffer obj)))
     (readObjectData [buffer type] (clj-read buffer))))
 
 (defn clojure-coll-serializer
@@ -133,12 +143,25 @@
       (let [constructor (.getConstructor klass (into-array Class [Long/TYPE]))]
         (.newInstance constructor (object-array [ (LongSerializer/get buffer true)]))))))
 
+(def ratio-serializer
+  (proxy [Serializer] []  
+    (writeObjectData [buffer ^Ratio obj]
+      (doto (BigIntegerSerializer.)
+        (.writeObjectData buffer (.numerator obj))
+        (.writeObjectData buffer (.denominator obj))))
+    (readObjectData [buffer type]
+      (let [^Serializer big (BigIntegerSerializer.)]
+        (Ratio. (.readObjectData big buffer nil)
+                (.readObjectData big buffer nil))))))
+
 (def clojure-primitives
   "Define a map of Clojure primitives and their serializers to install."
   (array-map
    BigInt clojure-reader-serializer
    Keyword clojure-reader-serializer
-   Symbol clojure-reader-serializer))
+   Symbol clojure-reader-serializer
+   Ratio clojure-reader-serializer
+   Var clojure-print-dup-serializer))
 
 (def java-primitives
   (array-map
@@ -160,8 +183,8 @@
     [MapEntry (clojure-coll-serializer registry [])]]
 
    ;; list/seq collections
-   (zipmap [Cons PersistentList$EmptyList PersistentList LazySeq IteratorSeq]
-           (repeat (clojure-seq-serializer registry list)))
+   (map #(vector % (clojure-seq-serializer registry list))
+        [Cons PersistentList$EmptyList PersistentList LazySeq IteratorSeq ArraySeq])
 
    ;; other seqs
    [[StringSeq stringseq-serializer]]
