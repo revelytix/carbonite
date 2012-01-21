@@ -160,7 +160,7 @@
    BigInt clojure-reader-serializer
    Keyword clojure-reader-serializer
    Symbol clojure-reader-serializer
-   Ratio clojure-reader-serializer
+   Ratio ratio-serializer
    Var clojure-print-dup-serializer))
 
 (def java-primitives
