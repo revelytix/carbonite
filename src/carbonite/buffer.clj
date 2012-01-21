@@ -7,14 +7,17 @@
 ;;;; stuff to access the Kryo context object's ThreadLocal storage
 
 (def context-key "kryobuffer")
+
 (defn get-from-context
   "Get a thread-local object from Kryo."
   []
   (.get (Kryo/getContext) context-key))
+
 (defn put-to-context
   "Put a thread-local object to Kryo."
   [value]
   (.put (Kryo/getContext) context-key value))
+
 (defn clear-context
   "Clear the thread-local object in Kryo."
   []
@@ -22,9 +25,9 @@
 
 ;;;; cached buffer settings
 
-(def ^:dynamic *initial-buffer* 1024)
-(def ^:dynamic *max-buffer* (* 512 1024 1024))  ;; max item can be 512MB
-(def ^:dynamic *keep-buffer* (* 128 1024)) ;; never keep a buffer bigger than 128KB
+(def ^{:dynamic true} *initial-buffer* 1024)
+(def ^{:dynamic true} *max-buffer* (* 512 1024 1024))  ;; max item can be 512MB
+(def ^{:dynamic true} *keep-buffer* (* 128 1024)) ;; never keep a buffer bigger than 128KB
 
 (defn ensure-buffer
   "Create or return a Thread-specific scratch buffer for a kryo registry"
